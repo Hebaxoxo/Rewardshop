@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Heba's Achievement Board 🏆</title>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f0ff;
+    margin: 0;
+    padding: 2rem;
+    color: #5b21b6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .input-area {
+    display: flex;
+    max-width: 400px;
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  input[type="text"] {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid #a78bfa;
+    border-radius: 8px 0 0 8px;
+    font-size: 1rem;
+    outline: none;
+  }
+  input[type="text"]:focus {
+    border-color: #7c3aed;
+    box-shadow: 0 0 5px #7c3aed88;
+  }
+  button {
+    background-color: #7c3aed;
+    color: white;
+    border: none;
+    padding: 0 1.5rem;
+    font-size: 1rem;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+  }
+  button:hover {
+    background-color: #5b21b6;
+  }
+  .achievements-container {
+    max-width: 600px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+    gap: 1rem;
+  }
+  .achievement {
+    background-color: white;
+    border: 2px solid #a78bfa;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgb(183 147 255 / 0.4);
+  }
+  .achievement-icon {
+    font-size: 3.5rem;
+    user-select: none;
+  }
+  .achievement-text {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #5b21b6;
+  }
+  .no-achievements {
+    color: #a78bfa;
+    font-style: italic;
+    text-align: center;
+    margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+  <h1>🏆 Heba's Achievement Board 🏆</h1>
+  
+  <div class="input-area">
+    <input type="text" id="achievementInput" placeholder="Add a new achievement..." />
+    <button id="addBtn">Add</button>
+  </div>
+
+  <div class="achievements-container" id="achievementsContainer">
+    <!-- Achievements show here -->
+  </div>
+
+  <p class="no-achievements" id="noAchievementsMsg">No achievements yet. Add some! ✨</p>
+
+<script>
+  const input = document.getElementById("achievementInput");
+  const addBtn = document.getElementById("addBtn");
+  const container = document.getElementById("achievementsContainer");
+  const noMsg = document.getElementById("noAchievementsMsg");
+
+  // Load achievements from localStorage or empty array
+  let achievements = JSON.parse(localStorage.getItem("hebaAchievements")) || [];
+
+  function saveAchievements() {
+    localStorage.setItem("hebaAchievements", JSON.stringify(achievements));
+  }
+
+  function renderAchievements() {
+    container.innerHTML = "";
+    if (achievements.length === 0) {
+      noMsg.style.display = "block";
+    } else {
+      noMsg.style.display = "none";
+      achievements.forEach((ach, index) => {
+        const div = document.createElement("div");
+        div.className = "achievement";
+
+        const icon = document.createElement("div");
+        icon.className = "achievement-icon";
+        icon.textContent = "🏆";
+
+        const text = document.createElement("div");
+        text.className = "achievement-text";
+        text.textContent = ach;
+
+        div.appendChild(icon);
+        div.appendChild(text);
+
+        container.appendChild(div);
+      });
+    }
+  }
+
+  function addAchievement() {
+    const val = input.value.trim();
+    if (val === "") return;
+    achievements.push(val);
+    input.value = "";
+    saveAchievements();
+    renderAchievements();
+  }
+
+  addBtn.addEventListener("click", addAchievement);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") addAchievement();
+  });
+
+  renderAchievements();
+</script>
+</body>
+</html>
