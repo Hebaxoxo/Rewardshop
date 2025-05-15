@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🎀 Heba's Cute Reward Shop 🎀</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #ffe4ec;
+      margin: 0; padding: 20px;
+      color: #b91c4f;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .top-section {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      gap: 20px;
+    }
+    .coins-display {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    button {
+      background-color: #ec4899;
+      border: none;
+      color: white;
+      padding: 10px 14px;
+      margin: 5px 5px 0 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background-color: #be185d;
+    }
+    button.rules-toggle {
+      background-color: #fbbf24;
+      color: #5a3906;
+    }
+    button.rules-toggle:hover {
+      background-color: #b45309;
+      color: white;
+    }
+    .log {
+      max-height: 160px;
+      overflow-y: auto;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(255, 182, 193, 0.7);
+      font-size: 0.9rem;
+      line-height: 1.3rem;
+    }
+    .rewards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+      gap: 20px;
+    }
+    .reward-card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(255, 182, 193, 0.7);
+      text-align: center;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+    .reward-card:hover {
+      transform: scale(1.05);
+    }
+    .reward-name {
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #be185d;
+    }
+    .reward-cost {
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #9d174d;
+    }
+    .rules {
+      background: white;
+      border-radius: 12px;
+      padding: 15px 20px;
+      box-shadow: 0 0 12px rgba(255, 182, 193, 0.8);
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+      user-select: none;
+      color: #7f1d4a;
+    }
+    .rules ul {
+      padding-left: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎀 Heba's Cute Reward Shop 🎀</h1>
+
+    <div class="top-section">
+      <div>
+        <div class="coins-display">💰 Coins: <span id="coins">0</span></div>
+        <div id="work-buttons">
+          <!-- Hour buttons added by JS -->
+        </div>
+        <button id="toggle-rules" class="rules-toggle">📜 Rules</button>
+      </div>
+
+      <div>
+        <h3>📋 Log</h3>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+
+    <div id="rules" class="rules hidden">
+      <h3>✨ Rules ✨</h3>
+      <ul>
+        <li>🎯 You earn 15 coins for each hour of focused work.</li>
+        <li>💸 You can only redeem a reward if you have enough coins logged.</li>
+        <li>🧠 Treat your time as valuable currency — be your own EA.</li>
+        <li>🚫 Anything that could harm momentum (scrolling, distractions) is not available here.</li>
+        <li>🏡 Outside activities cost more to reflect energy cost for introverts like Heba.</li>
+        <li>🌅 You must complete at least 3 hours of focused work before noon each day.</li>
+      </ul>
+    </div>
+
+    <div class="rewards-grid" id="rewards">
+      <!-- Reward cards added by JS -->
+    </div>
+  </div>
+
+<script>
+  const rewardsList = [
+    { name: "K-Drama Episode", cost: 50 },
+    { name: "Coloring Date", cost: 120 },
+    { name: "Movie Night", cost: 160 },
+    { name: "Meet Friend at Café", cost: 350 },
+    { name: "Online Treat (<150 EGP)", cost: 250 },
+    { name: "Eat Out", cost: 600 },
+    { name: "Revision-Only Day", cost: 250 },
+    { name: "New Item (Top, Accessory)", cost: 550 },
+  ];
+
+  // State
+  let coins = 0;
+  let log = [];
+
+  // DOM references
+  const coinsSpan = document.getElementById('coins');
+  const logDiv = document.getElementById('log');
+  const rewardsDiv = document.getElementById('rewards');
+  const workButtonsDiv = document.getElementById('work-buttons');
+  const rulesDiv = document.getElementById('rules');
+  const toggleRulesBtn = document.getElementById('toggle-rules');
+
+  // Load saved data
+  function loadData() {
+    const savedCoins = localStorage.getItem('hebaCoins');
+    const savedLog = localStorage.getItem('hebaLog');
+    if (savedCoins) coins = parseInt(savedCoins, 10);
+    if (savedLog) log = JSON.parse(savedLog);
+  }
+
+  // Save data
+  function saveData() {
+    localStorage.setItem('hebaCoins', coins);
+    localStorage.setItem('hebaLog', JSON.stringify(log));
+  }
+
+  // Render coins and log
+  function render() {
+    coinsSpan.textContent = coins;
+    logDiv.innerHTML = log.slice().reverse().map(entry => `<div>• ${entry}</div>`).join('');
+  }
+
+  // Add coins for work done
+  function addCoins(hours) {
+    const earned = Math.round(hours * 15);
+    coins += earned;
+    log.push(`+${earned} coins for ${hours} hour(s) of work`);
+    saveData();
+    render();
+  }
+
+  // Redeem reward if enough coins
+  function redeemReward(cost, name) {
+    if (coins >= cost) {
+      coins -= cost;
+      log.push(`-${cost} coins for ${name}`);
+      saveData();
+      render();
+      alert(`Congrats! You redeemed: ${name}`);
+    } else {
+      alert("Not enough coins! Work more to earn it 💪");
+    }
+  }
+
+  // Create work hour buttons
+  function createWorkButtons() {
+    [0.5, 1, 1.5, 2, 3].forEach(h => {
+      const btn = document.createElement('button');
+      btn.textContent = `+${h} hr`;
+      btn.onclick = () => addCoins(h);
+      workButtonsDiv.appendChild(btn);
+    });
+  }
+
+  // Create rewards cards
+  function createRewards() {
+    rewardsList.forEach(({ name, cost }) => {
+      const card = document.createElement('div');
+      card.className = 'reward-card';
+
+      const title = document.createElement('div');
+      title.className = 'reward-name';
+      title.textContent = name;
+
+      const costDiv = document.createElement('div');
+      costDiv.className = 'reward-cost';
+      costDiv.textContent = `Cost: ${cost} coins`;
+
+      const redeemBtn = document.createElement('button');
+      redeemBtn.textContent = 'Redeem 🎁';
+      redeemBtn.onclick = () => redeemReward(cost, name);
+
+      card.appendChild(title);
+      card.appendChild(costDiv);
+      card.appendChild(redeemBtn);
+      rewardsDiv.appendChild(card);
+    });
+  }
+
+  // Toggle rules visibility
+  toggleRulesBtn.onclick = () => {
+    rulesDiv.classList.toggle('hidden');
+  }
+
+  // Initialize
+  loadData();
+  createWorkButtons();
+  createRewards();
+  render();
+</script>
+</body>
+</html>
