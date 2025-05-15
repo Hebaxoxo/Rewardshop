@@ -133,12 +133,11 @@
     <div id="rules" class="rules hidden">
       <h3>✨ Rules ✨</h3>
       <ul>
-        <li>🎯 You earn 15 coins for each hour of focused work.</li>
+        <li>🎯 You earn 10 coins for each hour of focused work.</li>
         <li>💸 You can only redeem a reward if you have enough coins logged.</li>
         <li>🧠 Treat your time as valuable currency — be your own EA.</li>
         <li>🚫 Anything that could harm momentum (scrolling, distractions) is not available here.</li>
-        <li>🏡 Outside activities cost more to reflect energy cost for introverts like Heba.</li>
-        <li>🌅 You must complete at least 3 hours of focused work before noon each day.</li>
+        <li>🌅 If you complete 3 hours of focused work before noon, you get 20 points extra.</li>
       </ul>
     </div>
 
@@ -193,7 +192,7 @@
 
   // Add coins for work done
   function addCoins(hours) {
-    const earned = Math.round(hours * 15);
+    const earned = Math.round(hours * 10);
     coins += earned;
     log.push(`+${earned} coins for ${hours} hour(s) of work`);
     saveData();
