@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🎀 Heba's Cute Reward Shop 🎀</title>
+  <title>Reward Shop</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
     body {
@@ -113,14 +113,12 @@
 </head>
 <body>
   <div class="container">
-    <h1>🎀 Heba's Cute Reward Shop 🎀</h1>
+    <h1 id="shop-title">🎀 Reward Shop 🎀</h1>
 
     <div class="top-section">
       <div>
         <div class="coins-display">💰 Coins: <span id="coins">0</span></div>
-        <div id="work-buttons">
-          <!-- Hour buttons added by JS -->
-        </div>
+        <div id="work-buttons"></div>
         <button id="toggle-rules" class="rules-toggle">📜 Rules</button>
       </div>
 
@@ -141,9 +139,7 @@
       </ul>
     </div>
 
-    <div class="rewards-grid" id="rewards">
-      <!-- Reward cards added by JS -->
-    </div>
+    <div class="rewards-grid" id="rewards"></div>
   </div>
 
 <script>
@@ -169,6 +165,18 @@
   const workButtonsDiv = document.getElementById('work-buttons');
   const rulesDiv = document.getElementById('rules');
   const toggleRulesBtn = document.getElementById('toggle-rules');
+  const shopTitle = document.getElementById('shop-title');
+
+  // Get or ask for name
+  function getName() {
+    let name = localStorage.getItem('rewardUserName');
+    if (!name) {
+      name = prompt("What is your name?").trim();
+      if (!name) name = "Your";
+      localStorage.setItem('rewardUserName', name);
+    }
+    shopTitle.textContent = `🎀 ${name}'s Reward Shop 🎀`;
+  }
 
   // Load saved data
   function loadData() {
@@ -253,6 +261,7 @@
   }
 
   // Initialize
+  getName();
   loadData();
   createWorkButtons();
   createRewards();
